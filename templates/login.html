@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Login</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <label>Unggah foto wajah:</label><br>
+        <input type="file" name="photo" required><br>
+        <button type="submit">Login & Absen</button>
+    </form>
+{% endblock %}

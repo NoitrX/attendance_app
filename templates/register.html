@@ -2,15 +2,12 @@
 <div
   class="w-full bg-white flex flex-col lg:flex-row justify-center items-center w-screen h-screen gap-4"
 >
-  <div
-    class="flex flex-col p-8 w-full"
-  >
-    <div class="w-full mb-12">
-        Logo
-    </div>
+  <div class="flex flex-col p-8 w-full">
+    <div class="w-full mb-12">Logo</div>
     <h4 class="font-semibold text-3xl">Daftar Akun</h4>
     <p class="text-xs text-gray-500">
       Masukan Data Dirimu untuk akses web aplikasi absensi
+    </p>
 
     <hr class="w-full border border-gray-200 mt-2" />
     <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 mt-4 w-full">
@@ -102,7 +99,7 @@
         </div>
       </div>
 
-      <div class="w-full mt-2 col-span-2 mt-3">
+      <div class="w-full mt-2 col-span-1 lg:col-span-2 mt-3">
         <div class="mx-auto w-full">
           <label
             for="example5"
@@ -148,12 +145,19 @@
         </div>
       </div>
 
-      <div class="w-full text-center col-span-2 mt-4">
-         <p class="text-gray-700">Sudah Punya Akun ? <a class="font-semibold text-red-600" href="">Login Disini!</a> </p>
+      <div class="w-full col-span-1 lg:col-span-2 mt-3">
+        <button class="px-8 py-2 w-full bg-red-500 text-white font-semibold text-white rounded-md hover:bg-red-400 transition-all duration-200 cursor-pointer">Daftar</button>
+      </div>
+
+      <div class="w-full text-center col-span-1 lg:col-span-2 mt-4">
+        <p class="text-gray-700">
+          Sudah Punya Akun ?
+          <a class="font-semibold text-red-600" href="">Login Disini!</a>
+        </p>
       </div>
     </div>
   </div>
 
-  <div class="w-full border h-full border-gray-300">Image</div>
+  <div class="w-full border h-full border-gray-300 hidden lg:block">Image</div>
 </div>
 {% endblock %}

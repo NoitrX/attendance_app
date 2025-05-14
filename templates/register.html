@@ -1,13 +1,159 @@
-{% extends 'base.html' %}
-{% block content %}
-    <h2 class="font-semibold text-blue-500">Registrasi</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="text" name="name" placeholder="Nama" required><br>
-        <input type="email" name="email" placeholder="Email" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
-        <input type="text" name="identifier" placeholder="ID Pekerja/NIM" required><br>
-        <label>Unggah minimal 5 foto wajah:</label><br>
-        <input type="file" name="photos" multiple required><br>
-        <button type="submit">Register</button>
-    </form>
+{% extends 'base.html' %} {% block content %}
+<div
+  class="w-full bg-white flex flex-col lg:flex-row justify-center items-center w-screen h-screen gap-4"
+>
+  <div
+    class="flex flex-col p-8 w-full"
+  >
+    <div class="w-full mb-12">
+        Logo
+    </div>
+    <h4 class="font-semibold text-3xl">Daftar Akun</h4>
+    <p class="text-xs text-gray-500">
+      Masukan Data Dirimu untuk akses web aplikasi absensi
+
+    <hr class="w-full border border-gray-200 mt-2" />
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 mt-4 w-full">
+      <div class="w-full mt-2">
+        <label for="username" class="block text-sm/6 font-medium text-gray-900"
+          >First Name</label
+        >
+        <div class="mt-2">
+          <div
+            class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600"
+          >
+            <div
+              class="shrink-0 text-base text-gray-500 select-none sm:text-sm/6"
+            ></div>
+            <input
+              type="text"
+              name="first_name"
+              id="first_name"
+              class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+              placeholder="Input Your First Name"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full mt-2">
+        <label for="username" class="block text-sm/6 font-medium text-gray-900"
+          >Last Name</label
+        >
+        <div class="mt-2">
+          <div
+            class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600"
+          >
+            <div
+              class="shrink-0 text-base text-gray-500 select-none sm:text-sm/6"
+            ></div>
+            <input
+              type="text"
+              name="last_name"
+              id="last_name"
+              class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+              placeholder="Input Your Last Name"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full mt-2">
+        <label for="username" class="block text-sm/6 font-medium text-gray-900"
+          >Email</label
+        >
+        <div class="mt-2">
+          <div
+            class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600"
+          >
+            <div
+              class="shrink-0 text-base text-gray-500 select-none sm:text-sm/6"
+            ></div>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+              placeholder="Email"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full mt-2">
+        <label for="username" class="block text-sm/6 font-medium text-gray-900"
+          >Password</label
+        >
+        <div class="mt-2">
+          <div
+            class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600"
+          >
+            <div
+              class="shrink-0 text-base text-gray-500 select-none sm:text-sm/6"
+            ></div>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+              placeholder="Password"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full mt-2 col-span-2 mt-3">
+        <div class="mx-auto w-full">
+          <label
+            for="example5"
+            class="mb-1 block text-sm font-medium text-gray-700"
+            >Upload file</label
+          >
+          <label
+            class="flex w-full cursor-pointer appearance-none items-center justify-center rounded-md border-2 border-dashed border-gray-200 p-6 transition-all hover:border-primary-300"
+          >
+            <div class="space-y-1 text-center">
+              <div
+                class="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6 text-gray-500"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                  />
+                </svg>
+              </div>
+              <div class="text-gray-600">
+                <a
+                  href="#"
+                  class="font-medium text-primary-500 hover:text-primary-700"
+                  >Click to upload</a
+                >
+                or drag and drop
+              </div>
+              <p class="text-sm text-gray-500">
+                SVG, PNG, JPG or GIF (max. 800x400px)
+              </p>
+            </div>
+            <input id="example5" type="file" class="sr-only" />
+          </label>
+        </div>
+      </div>
+
+      <div class="w-full text-center col-span-2 mt-4">
+         <p class="text-gray-700">Sudah Punya Akun ? <a class="font-semibold text-red-600" href="">Login Disini!</a> </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full border h-full border-gray-300">Image</div>
+</div>
 {% endblock %}

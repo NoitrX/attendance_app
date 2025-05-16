@@ -25,4 +25,4 @@ def login():
             request.files['photo'],
             app
         )
-    return render_template('auth/login.html')
+    return render_template('login.html')

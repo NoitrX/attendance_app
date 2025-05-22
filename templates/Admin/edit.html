@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'include/navbar.html' %}
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8 mt-8">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-2xl font-bold text-gray-800">Edit Jadwal</h2>
+    <div class="h-1 flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 ml-4 rounded-full"></div>
+  </div>
+
+  <form method="POST" action="{{ url_for('auth.schedule_edit', id=schedule.id) }}" class="space-y-6" id="editForm">
+    <div class="grid grid-cols-4 gap-6">
+      <!-- Judul -->
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Judul Jadwal</label>
+        <input name="title" value="{{ schedule.schedule_title }}" required 
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <!-- Waktu Mulai -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Mulai</label>
+        <input type="time" name="start_time" 
+       value="{{ schedule.start_time.split(':')[:2]|join(':') if schedule.start_time else '' }}" required
+       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      
+      <!-- Waktu Selesai -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Selesai</label>
+        <input type="time" name="end_time" 
+       value="{{ schedule.end_time.split(':')[:2]|join(':') if schedule.end_time else '' }}" required
+       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex items-end">
+        <button type="submit" 
+                class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-2 px-4 rounded-lg shadow-md hover:from-yellow-600 hover:to-orange-700 transition duration-200 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+          </svg>
+          Update
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+ document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form'); 
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  submitButton.addEventListener('click', function(e) {
+    e.preventDefault(); 
+
+    Swal.fire({
+      title: 'Update Jadwal?',
+      text: "Anda yakin ingin menyimpan perubahan?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#F59E0B',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Ya, Simpan!',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit(); 
+      }
+    });
+  });
+});
+  // Cek parameter URL untuk notifikasi
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('error')) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Gagal Menyimpan',
+      text: 'Terjadi kesalahan saat menyimpan data',
+      confirmButtonColor: '#F59E0B'
+    });
+    // Bersihkan URL tanpa reload
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+</script>
+{% endblock %}

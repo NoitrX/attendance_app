@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'include/navbar.html' %}
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center mb-8 mt-8 ml-6">
+      <div class="mt-4 sm:mt-0">
+        <a href="{{ url_for('auth.schedule_create') }}"
+          class="inline-flex items-center px-4 py-2.5 bg-indigo-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
+          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+            fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+              clip-rule="evenodd" />
+          </svg>
+          New Schedule
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mr-8 ml-8">
+      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center">
+          <div class="p-3 rounded-lg bg-indigo-50 text-indigo-600">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-500">Total Schedules</h3>
+            <p class="text-2xl font-semibold text-gray-900">{{ schedules|length }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center">
+          <div class="p-3 rounded-lg bg-green-50 text-green-600">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-500">Active</h3>
+            <p class="text-2xl font-semibold text-gray-900">{{ schedules|selectattr('status', 'equalto', 'Aktif')|list|length }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center">
+          <div class="p-3 rounded-lg bg-red-50 text-red-600">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <div class="ml-4 ">
+            <h3 class="text-sm font-medium text-gray-500">Inactive</h3>
+            <p class="text-2xl font-semibold text-gray-900">{{ schedules|selectattr('status', 'equalto', 'Tidak Aktif')|list|length }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white shadow-sm rounded-xl overflow-hidden border border-gray-100">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Schedule Title</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mulai</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Selesai</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for s in schedules %}
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="h-10 w-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                    <svg class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{{ s.schedule_title }}</div>
+                    <div class="text-sm text-gray-500">{{ s.created_at }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-900">{{ s.start_time }}</td>
+              <td class="px-6 py-4 text-sm text-gray-500">{{ s.end_time }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full 
+                {{ 'bg-green-100 text-green-800' if s.status == 'Aktif' else 'bg-red-100 text-red-800' }}">
+                  {{ s.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right text-sm font-medium">
+                <div class="flex justify-end space-x-3">
+                  <a href="{{ url_for('auth.schedule_edit', id=s.id) }}"
+                    class="text-indigo-600 hover:text-indigo-900 flex items-center group">
+                    <span class="hidden md:inline group-hover:underline">Edit</span>
+                    <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15.232 5.232l3.536 3.536M6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </a>
+                  <form action="{{ url_for('auth.schedule_delete', id=s.id) }}" method="POST" class="inline">
+                    <button type="button"
+                    onclick="confirmDelete({{ s.id }})"
+                      class="text-red-600 hover:text-red-900 flex items-center group">
+                      <span class="hidden md:inline group-hover:underline">Delete</span>
+                      <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4h-6v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </form>
+                  <form id="toggleForm-{{ s.id }}" action="{{ url_for('auth.schedule_toggle', id=s.id) }}" method="POST" class="inline">
+                    <button type="button"
+                      onclick="confirmToggle({{ s.id }}, '{{ 'Nonaktifkan' if s.status == 'Aktif' else 'Aktifkan' }}')"
+                      class="{{ 'text-yellow-600 hover:text-yellow-900' if s.status == 'Aktif' else 'text-green-600 hover:text-green-900' }} flex items-center group">
+                      <span class="hidden md:inline group-hover:underline">
+                        {{ 'Deactivate' if s.status == 'Aktif' else 'Activate' }}
+                      </span>
+                      <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if not schedules %}
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No schedules</h3>
+        <p class="mt-1 text-sm text-gray-500">Get started by creating a new schedule.</p>
+        <div class="mt-6">
+          <a href="{{ url_for('auth.schedule_create') }}"
+            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+              fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clip-rule="evenodd" />
+            </svg>
+            New Schedule
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Fungsi untuk baca parameter URL
+  function getUrlParam(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+  }
+
+
+  function showNotifications() {
+    const created = getUrlParam('created');
+    const updated = getUrlParam('updated');
+    const error = getUrlParam('error');
+    const deleted = getUrlParam('deleted'); 
+  
+    if (created === '1') {
+      Swal.fire({
+        icon: 'success',
+        title: 'Schedule created successfully!',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  
+    if (updated === '1') {
+      Swal.fire({
+        icon: 'success',
+        title: 'Jadwal berhasil diperbarui!',
+        timer: 3000,
+        showConfirmButton: false,
+        willClose: () => {
+          window.location.reload();
+        }
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  
+    if (error === '1') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Operation failed!',
+        text: 'Please try again later.',
+        timer: 3000
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  
+    if (deleted === '1') {
+      Swal.fire({
+        icon: 'success',
+        title: 'Schedule deleted successfully!',
+        timer: 3000,
+        showConfirmButton: false,
+        willClose: () => {
+          window.location.reload();
+        }
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
+
+  // Fungsi untuk delete
+  function confirmDelete(id) {
+    Swal.fire({
+      title: 'Delete this schedule?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.querySelector(`form[action="/schedule/delete/${id}"]`).submit();
+      }
+    });
+  }
+
+  // Fungsi untuk toggle status
+  function confirmToggle(id, actionText) {
+    Swal.fire({
+      title: `${actionText} this schedule?`,
+      text: `This will ${actionText.toLowerCase()} the schedule for all users.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, confirm',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#4f46e5',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById(`toggleForm-${id}`).submit();
+      }
+    });
+  }
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    showNotifications();
+  });
+</script>
+
+{% endblock %}

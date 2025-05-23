@@ -12,7 +12,7 @@ def register():
             request.form['password'],
             request.form['identifier'],
             request.files.getlist('photos'),
-            app
+            
         )
     return render_template('register.html')
 
@@ -23,7 +23,7 @@ def login():
             request.form['email'],
             request.form['password'],
             request.files['photo'],
-            app
+            
         )
     return render_template('login.html')
 

@@ -1,0 +1,200 @@
+{% extends 'base.html' %} {% block content %}
+{% include 'include/navbar.html' %}
+<div class="grid grid-cols-1 mt-8 md:grid-cols-1 mb-8 w-70">
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-indigo-50 text-indigo-600">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="25"
+                    height="25"
+                    fill="currentColor"
+                    class="bi bi-person"
+                    viewBox="0 0 16 16"
+                >
+                    <path
+                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"
+                    />
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500">Total User</h3>
+                <p class="text-2xl font-semibold text-gray-900">
+                    {{ users|length }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table -->
+<div
+    class="bg-white shadow-sm rounded-xl overflow-hidden border border-gray-100"
+>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                        Name
+                    </th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                        Email
+                    </th>
+                    <th
+                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"
+                    >
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for user in users %}
+                <tr class="hover:bg-gray-50 transition-colors"> 
+                    <td
+                        class="px-6 py-4 text-sm text-gray-900 flex items-center gap-2"
+                    >
+                        <div
+                            class="h-10 w-10 rounded-lg bg-indigo-100 flex items-center justify-center"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="25"
+                                height="25"
+                                fill="blue"
+                                class="bi bi-person"
+                                viewBox="0 0 16 16"
+                            >
+                                <path
+                                    d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"
+                                />
+                            </svg>
+                        </div>
+                        <i class="fas fa-user text-gray-400"></i>
+                        {{ user.first_name }} {{ user.last_name }}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">
+                        {{ user.email }}
+                    </td>
+                    <td
+                        class="px-6 py-4 text-right text-sm font-medium space-x-2"
+                    >
+                        <div class="flex justify-end space-x-3">
+                            <a
+                                href="{{ url_for('admin.user_detail', user_id=user.id) }}"
+                                class="text-green-600 hover:text-green-900 flex items-center group"
+                            >
+                                <span class="hidden md:inline hover:underline">
+                                    Detail
+                                </span>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-eye ml-1"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <path
+                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"
+                                    />
+                                    <path
+                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"
+                                    />
+                                </svg>
+                            </a>
+                            <a
+                                href="{{ url_for('admin.edit_user_route', user_id=user.id) }}"
+                                class="text-indigo-600 hover:text-indigo-900 flex items-center group"
+                            >
+                                <span
+                                    class="hidden md:inline group-hover:underline"
+                                >
+                                    Edit
+                                </span>
+                                <svg
+                                    class="ml-1 h-4 w-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M15.232 5.232l3.536 3.536M6.5 21.036H3v-3.572L16.732 3.732z"
+                                    />
+                                </svg>
+                            </a>
+                            <form
+                                id="delete-form-{{ user.id }}"
+                                action="{{ url_for('admin.delete', user_id=user.id) }}"
+                                method="POST"
+                                class="inline"
+                            >
+                                <button
+                                    type="button"
+                                    class="text-red-600 hover:text-red-900 flex items-center group"
+                                    onclick="confirmDelete('{{ user.id }}')"
+                                >
+                                    <span
+                                        class="hidden md:inline group-hover:underline"
+                                    >
+                                        Delete
+                                    </span>
+                                    <svg
+                                        class="ml-1 h-4 w-4"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4h-6v3M4 7h16"
+                                        />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if not users %}
+    <div class="text-center py-12">
+        <i class="fas fa-user-slash text-3xl text-gray-300 mb-3"></i>
+        <h3 class="text-sm font-medium text-gray-900">No users</h3>
+        <p class="mt-1 text-sm text-gray-500">
+            There are no users in the system right now.
+        </p>
+    </div>
+    {% endif %}
+</div>
+<script>
+    function confirmDelete(userId) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e3342f",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, delete it",
+            cancelButtonText: "Cancel",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${userId}`).submit();
+            }
+        });
+    }
+</script>
+{% endblock %}

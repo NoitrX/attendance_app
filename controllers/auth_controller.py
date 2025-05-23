@@ -1,5 +1,5 @@
 from flask import flash, redirect, url_for
-from models import user, db, user_biometric , UserAttendance, schedule
+from models import user, db, user_biometric , UserAttendance, schedule, User
 
 
 def register_user(name, email, password, identifier, files, app):

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from controllers.auth_controller import register_user, login_user
+from models import User, db
 
 auth = Blueprint('auth', __name__)
 
@@ -12,7 +13,7 @@ def register():
             request.form['password'],
             request.form['identifier'],
             request.files.getlist('photos'),
-            app
+            
         )
     return render_template('register.html')
 
@@ -23,6 +24,6 @@ def login():
             request.form['email'],
             request.form['password'],
             request.files['photo'],
-            app
+            
         )
     return render_template('login.html')

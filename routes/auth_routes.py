@@ -37,10 +37,11 @@ def login_admin_route():
         password = request.form.get('password')
         return login_admin(email,password)
     return render_template('login_admin.html')
+
 @auth.route('/admin/schedules')
 def schedule_index():
     schedules = Schedule.query.all()
-    return render_template('Admin/index.html', schedules=schedules)
+    return render_template('admin/index-admin-schedule.html', schedules=schedules)
 
 
 @auth.route('/admin/create', methods=['GET', 'POST'])
@@ -66,7 +67,7 @@ def schedule_create():
             return redirect(url_for('auth.schedule_index', error=1))
     
     # Return untuk method GET
-    return render_template('Admin/create.html')
+    return render_template('admin/create-admin-schedule.html')
 
 
 @auth.route('/admin/edit/<int:id>', methods=['GET', 'POST'])
@@ -98,7 +99,7 @@ def schedule_edit(id):
             print(f"Edit error: {e}")
             return redirect(url_for('auth.schedule_edit', id=id, error=1))
     
-    return render_template('Admin/edit.html', schedule=schedule)
+    return render_template('admin/edit-admin-schedule.html', schedule=schedule)
    
 
 

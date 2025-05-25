@@ -20,7 +20,7 @@ def edit_user_route(user_id):
         user.role = request.form['role']
 
         db.session.commit()
-        return redirect(url_for('admin.index'))  # ganti 'auth.index' sesuai nama route buat halaman user list kamu
+        return redirect(url_for('admin.index')) 
 
     return render_template('admin/edit.html', user=user)
 

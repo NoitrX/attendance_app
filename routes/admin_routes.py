@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from controllers.admin_controller import get_all_users, delete_user
 from models import User, db, UserAttendance, Schedule
+from datetime import datetime
 
 admin = Blueprint('admin', __name__)
 
@@ -44,6 +45,15 @@ def delete(user_id):
 def user_detail(user_id):
     user = User.query.get_or_404(user_id)
     attendances = UserAttendance.query.filter_by(user_id=user.id).all()
+
+    for a in attendances:
+        try:
+            dt = datetime.strptime(a.attendance_time, '%Y-%m-%d %H:%M:%S')
+            a.formatted_time = dt.strftime('%A, %d %B %Y - %H:%M')
+        except ValueError:
+            a.formatted_time = a.attendance_time  # fallback biar gak error
+
     schedule_ids = [a.schedule_id for a in attendances]
     schedules = Schedule.query.filter(Schedule.id.in_(schedule_ids)).all()
+
     return render_template('admin/user_detail.html', user=user, attendances=attendances, schedules=schedules)

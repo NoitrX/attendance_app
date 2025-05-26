@@ -1,439 +1,38 @@
-{% extends 'base.html' %}
-{% block content %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PNJERS | Modern Student Portal</title>
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-        />
-        <style>
-            :root {
-                --primary: #6366f1;
-                --primary-dark: #4f46e5;
-                --glass: rgba(255, 255, 255, 0.08);
-                --glass-border: rgba(255, 255, 255, 0.1);
-            }
-
-            html,
-            body {
-                width: 100vw;
-                min-height: 100vh;
-                overflow-x: hidden;
-                background: linear-gradient(135deg, #1e293b, #0f172a);
-            }
-
-            .main-container {
-                width: 100%;
-                min-height: 100vh;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                position: relative;
-            }
-
-            .form-section {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                padding: 2rem 4rem;
-                background: var(--glass);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                border-right: 1px solid var(--glass-border);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-                min-height: 100vh;
-                overflow-y: auto;
-            }
-
-            .right-section {
-                position: relative;
-                min-height: 100vh;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                background: linear-gradient(
-                    135deg,
-                    rgba(99, 102, 241, 0.1),
-                    rgba(79, 70, 229, 0.2)
-                );
-            }
-
-            .right-content {
-                position: relative;
-                z-index: 2;
-                text-align: center;
-                color: white;
-                padding: 2rem;
-                max-width: 80%;
-            }
-
-            .floating-shapes {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-                z-index: 1;
-            }
-
-            .shape {
-                position: absolute;
-                border-radius: 50%;
-                filter: blur(60px);
-                opacity: 0.6;
-            }
-
-            .shape-1 {
-                width: 300px;
-                height: 300px;
-                background: #6366f1;
-                top: -100px;
-                right: -100px;
-                animation: float 8s ease-in-out infinite;
-            }
-
-            .shape-2 {
-                width: 200px;
-                height: 200px;
-                background: #ec4899;
-                bottom: -50px;
-                left: -50px;
-                animation: float 10s ease-in-out infinite reverse;
-            }
-
-            @keyframes float {
-                0%,
-                100% {
-                    transform: translate(0, 0);
-                }
-                50% {
-                    transform: translate(20px, 20px);
-                }
-            }
-
-            .input-field {
-                transition: all 0.3s ease;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
-                padding: 0.75rem 1.25rem;
-                color: white;
-            }
-
-            .input-field:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
-                background: rgba(255, 255, 255, 0.1);
-                outline: none;
-            }
-
-            .btn-primary {
-                background: var(--primary);
-                transition: all 0.3s ease;
-                border-radius: 12px;
-                padding: 0.75rem 1.25rem;
-                font-weight: 500;
-            }
-
-            .btn-primary:hover {
-                background: var(--primary-dark);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-            }
-
-            .btn-secondary {
-                background: rgba(255, 255, 255, 0.1);
-                transition: all 0.3s ease;
-                border-radius: 12px;
-                padding: 0.75rem 1.25rem;
-                font-weight: 500;
-                color: white;
-            }
-
-            .btn-secondary:hover {
-                background: rgba(255, 255, 255, 0.2);
-                transform: translateY(-2px);
-            }
-
-            .face-capture {
-                border-radius: 12px;
-                overflow: hidden;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                background: rgba(0, 0, 0, 0.3);
-                transition: all 0.3s ease;
-            }
-
-            .face-capture:hover {
-                border-color: var(--primary);
-                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
-            }
-
-            .logo {
-                transition: all 0.5s ease;
-            }
-
-            .logo:hover {
-                transform: rotate(15deg) scale(1.1);
-            }
-
-            .text-gradient {
-                background: linear-gradient(90deg, #6366f1, #ec4899);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-
-            .flash-message {
-                padding: 1rem;
-                margin-bottom: 1rem;
-                border-radius: 8px;
-                text-align: center;
-            }
-
-            .flash-message.success {
-                background: rgba(34, 197, 94, 0.2);
-                color: #22c55e;
-            }
-
-            .flash-message.error {
-                background: rgba(239, 68, 68, 0.2);
-                color: #ef4444;
-            }
-
-            /* Fix for camera mirroring */
-            #video {
-                transform: scaleX(-1);
-            }
-
-            @media (max-width: 1024px) {
-                .main-container {
-                    grid-template-columns: 1fr;
-                    min-height: 100vh;
-                }
-
-                .form-section {
-                    padding: 2rem;
-                    border-right: none;
-                    min-height: auto;
-                }
-
-                .right-section {
-                    display: none;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="main-container">
-            <!-- Left Side (Form) -->
-            <div class="form-section animate_animated animate_fadeInLeft">
-                <div class="text-center mb-8">
-                    <div class="flex justify-center mb-4 logo">
-                        <svg
-                            class="w-12 h-12 text-indigo-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="1.5"
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                            ></path>
-                        </svg>
-                    </div>
-                    <h1 class="text-4xl font-bold text-white mb-2">
-                        Welcome Back
-                    </h1>
-                    <p class="text-gray-400">
-                        Secure login with facial recognition
-                    </p>
-                </div>
-
-                <!-- Flash messages -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="flash-message {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-
-                <form
-                    class="space-y-6"
-                    method="POST"
-                    enctype="multipart/form-data"
+{% extends 'base.html' %} {% block content %}
+<div
+    class="w-full bg-[#070B25] flex flex-col lg:flex-row justify-center items-center w-screen h-screen gap-4 relative"
+>
+    <div
+        class="w-1/2 ml-4 bg-cover bg-center rounded-2xl"
+        style="background-color: #0f172a; height: 95vh"
+    >
+        <div
+            class="right-section animate_animated animate_fadeIn rounded-2xl relative h-full flex flex-col items-center py-6"
+        >
+            <div class="right-content text-center mb-4">
+                <h1 class="text-3xl font-bold text-white">FRANCES</h1>
+                <p class="text-sm text-gray-300">
+                    Face Recog Attendance System
+                </p>
+            </div>
+            <div class="flex flex-col items-center w-full">
+                <video
+                    id="video"
+                    width="400"
+                    height="300"
+                    autoplay
+                    class="rounded-md"
+                ></video>
+                <canvas id="canvas" class="hidden"></canvas>
+                <div
+                    id="overlay"
+                    class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hidden"
                 >
-                    <!-- Email Input -->
-                    <div class="space-y-2">
-                        <label
-                            for="email"
-                            class="block text-sm font-medium text-gray-300"
-                        >
-                            Institutional Email
-                        </label>
-                        <div class="relative">
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                required
-                                class="w-full input-field pl-12"
-                                placeholder="student@pnjers.edu"
-                            />
-                            <div
-                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-                            >
-                                <svg
-                                    class="h-5 w-5 text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="1.5"
-                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                    ></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Password Input -->
-                    <div class="space-y-2">
-                        <label
-                            for="password"
-                            class="block text-sm font-medium text-gray-300"
-                        >
-                            Password
-                        </label>
-                        <div class="relative">
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                required
-                                class="w-full input-field pl-12"
-                                placeholder="••••••••"
-                            />
-                            <div
-                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-                            >
-                                <svg
-                                    class="h-5 w-5 text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="1.5"
-                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                                    ></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="flex justify-end">
-                            <a
-                                href="#"
-                                class="text-sm text-indigo-400 hover:text-indigo-300"
-                            >
-                                Forgot password?
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Face Recognition -->
-                    <div class="space-y-3">
-                        <label class="block text-sm font-medium text-gray-300">
-                            Facial Verification
-                        </label>
-                        <div
-                            class="face-capture w-full h-48 relative overflow-hidden rounded-xl"
-                        >
-                            <video
-                                id="video"
-                                autoplay
-                                playsinline
-                                class="w-full h-full object-cover"
-                            ></video>
-                            <canvas id="canvas" class="hidden"></canvas>
-                            <div
-                                id="overlay"
-                                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hidden"
-                            >
-                                <div
-                                    class="text-center p-4 bg-white bg-opacity-90 rounded-lg"
-                                >
-                                    <svg
-                                        class="w-12 h-12 text-green-500 mx-auto mb-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        ></path>
-                                    </svg>
-                                    <p class="text-gray-800 font-medium">
-                                        Photo captured successfully
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex justify-center">
-                            <button
-                                type="button"
-                                id="captureBtn"
-                                class="btn-secondary flex items-center"
-                            >
-                                <svg
-                                    class="w-5 h-5 mr-2"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                                    ></path>
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                                    ></path>
-                                </svg>
-                                Capture Image
-                            </button>
-                        </div>
-                        <input type="hidden" name="photo" id="photo" required />
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button
-                        type="submit"
-                        class="w-full btn-primary flex items-center justify-center"
+                    <div
+                        class="text-center p-4 bg-white bg-opacity-90 rounded-lg"
                     >
                         <svg
-                            class="w-5 h-5 mr-2"
+                            class="w-12 h-12 text-green-500 mx-auto mb-2"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -443,115 +42,210 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                                 stroke-width="2"
-                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                             ></path>
                         </svg>
-                        Login & Verify
-                    </button>
-
-                    <div class="text-center text-sm text-gray-400">
-                        New to PNJERS?
-                        <a
-                            href="/register"
-                            class="text-indigo-400 hover:text-indigo-300"
-                        >
-                            Create account
-                        </a>
+                        <p class="text-gray-800 font-medium">
+                            Photo captured successfully
+                        </p>
                     </div>
-                </form>
-            </div>
-
-            <!-- Right Side (Simplified) -->
-            <div class="right-section animate_animated animate_fadeIn">
-                <div class="floating-shapes">
-                    <div class="shape shape-1"></div>
-                    <div class="shape shape-2"></div>
                 </div>
-
-                <div class="right-content">
-                    <h1 class="text-5xl font-bold mb-6 text-gradient">
-                        PNJERS
-                    </h1>
-                    <h2 class="text-2xl font-semibold text-white mb-4">
-                        Next Generation Student Portal
-                    </h2>
-                    <p class="text-gray-300 mb-8 max-w-md mx-auto">
-                        Experience seamless authentication with our advanced
-                        facial recognition technology.
-                    </p>
+                <div class="mt-4 space-y-2 w-full text-center">
+                    <div
+                        id="webcamPreview"
+                        class="grid grid-cols-3 gap-2 mx-auto"
+                        style="max-width: 400px"
+                    ></div>
+                    <div class="space-x-2">
+                        <button
+                            id="captureBtn"
+                            type="button"
+                            class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-500 text-xs"
+                        >
+                            Capture Photo
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Left Side (Form) -->
+    <div class="fow-1/2 p-4 mx-auto">
+        <div class="border border-white p-12 max-w-md mx-auto">
+            <h4
+                class="font-semibold text-base text-center text-xl text-white mb-2"
+            >
+                Login Into Frances
+            </h4>
+            <p class="text-xs text-gray-300 text-center">
+                Enter Your Details to Access the Attendance Web Application
+            </p>
 
-        <script>
-            const video = document.getElementById("video");
-            const canvas = document.getElementById("canvas");
-            const photoInput = document.getElementById("photo");
-            const captureBtn = document.getElementById("captureBtn");
-            const overlay = document.getElementById("overlay");
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=True) %} {%
+            if messages %}
+            <div class="mt-2 text-center text-xs">
+                {% for category, message in messages %}
+                <p
+                    class="{% if category == 'error' %}text-red-500{% else %}text-green-500{% endif %}"
+                >
+                    {{ message }}
+                </p>
+                {% endfor %}
+            </div>
+            {% endif %} {% endwith %}
 
-            navigator.mediaDevices
-                .getUserMedia({
-                    video: {
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                        facingMode: "user",
-                    },
-                })
-                .then((stream) => {
-                    video.srcObject = stream;
-                    video.play();
+            <hr class="w-full border border-gray-200 mt-2" />
 
-                    video.onplaying = () => {
-                        captureBtn.disabled = false;
-                        captureBtn.classList.remove("opacity-50");
-                    };
-                })
-                .catch((err) => {
-                    console.error("Camera error:", err);
-                    alert(
-                        "Could not access the camera. Please ensure you have granted camera permissions."
-                    );
-                    captureBtn.disabled = true;
-                    captureBtn.classList.add("opacity-50");
-                });
+            <form
+                class="space-y-6 mt-2"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+                <!-- Email Input -->
+                <div class="space-y-2">
+                    <label
+                        for="email"
+                        class="block text-xs font-medium text-white"
+                    >
+                        Institutional Email
+                    </label>
+                    <div class="relative">
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            required
+                            class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none"
+                            placeholder="student@pnjers.edu"
+                        />
+                    </div>
+                </div>
 
-            captureBtn.addEventListener("click", () => {
-                video.pause();
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext("2d");
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
-                photoInput.value = dataUrl;
-                overlay.classList.remove("hidden");
+                <!-- Password Input -->
+                <div class="space-y-2">
+                    <label
+                        for="password"
+                        class="block text-xs font-medium text-white"
+                    >
+                        Password
+                    </label>
+                    <div class="relative">
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            required
+                            class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none"
+                            placeholder="••••••••"
+                        />
+                    </div>
+                    <div class="flex justify-end">
+                        <a
+                            href="#"
+                            class="text-xs text-indigo-400 hover:text-indigo-300"
+                        >
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
 
-                setTimeout(() => {
-                    overlay.classList.add("hidden");
-                    video.play();
-                }, 2000);
+                <!-- Face Recognition -->
+                <div class="space-y-3">
+                    
+                    <input type="hidden" name="photo" id="photo" required />
+                </div>
 
-                const originalText = captureBtn.innerHTML;
-                captureBtn.innerHTML = `
+                <!-- Submit Button -->
+                <div
+                    class="flex justify-center w-full col-span-1 lg:col-span-2 mt-2"
+                >
+                    <button
+                        type="submit"
+                        class="px-4 py-3 w-32 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-500 transition-all duration-200 cursor-pointer text-xs"
+                    >
+                        Login & Verify
+                    </button>
+                </div>
+
+                <div class="text-center text-xs text-gray-400">
+                    New to Frances?
+                    <a href="/" class="text-indigo-400 hover:text-indigo-300">
+                        Create account
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const photoInput = document.getElementById("photo");
+    const captureBtn = document.getElementById("captureBtn");
+    const overlay = document.getElementById("overlay");
+
+    navigator.mediaDevices
+        .getUserMedia({
+            video: {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: "user",
+            },
+        })
+        .then((stream) => {
+            video.srcObject = stream;
+            video.play();
+
+            video.onplaying = () => {
+                captureBtn.disabled = false;
+                captureBtn.classList.remove("opacity-50");
+            };
+        })
+        .catch((err) => {
+            console.error("Camera error:", err);
+            alert(
+                "Could not access the camera. Please ensure you have granted camera permissions."
+            );
+            captureBtn.disabled = true;
+            captureBtn.classList.add("opacity-50");
+        });
+
+    captureBtn.addEventListener("click", () => {
+        video.pause();
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        photoInput.value = dataUrl;
+        overlay.classList.remove("hidden");
+
+        setTimeout(() => {
+            overlay.classList.add("hidden");
+            video.play();
+        }, 2000);
+
+        const originalText = captureBtn.innerHTML;
+        captureBtn.innerHTML = `
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Captured!
                 `;
 
-                setTimeout(() => {
-                    captureBtn.innerHTML = originalText;
-                }, 2000);
-            });
+        setTimeout(() => {
+            captureBtn.innerHTML = originalText;
+        }, 2000);
+    });
 
-            document.querySelector("form").addEventListener("submit", (e) => {
-                if (!photoInput.value) {
-                    e.preventDefault();
-                    alert("Please capture your photo before submitting");
-                    return false;
-                }
-            });
-        </script>
-    </body>
-</html>
+    document.querySelector("form").addEventListener("submit", (e) => {
+        if (!photoInput.value) {
+            e.preventDefault();
+            alert("Please capture your photo before submitting");
+            return false;
+        }
+    });
+</script>
 {% endblock %}

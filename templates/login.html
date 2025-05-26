@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -185,6 +186,28 @@
                 -webkit-text-fill-color: transparent;
             }
 
+            .flash-message {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-radius: 8px;
+                text-align: center;
+            }
+
+            .flash-message.success {
+                background: rgba(34, 197, 94, 0.2);
+                color: #22c55e;
+            }
+
+            .flash-message.error {
+                background: rgba(239, 68, 68, 0.2);
+                color: #ef4444;
+            }
+
+            /* Fix for camera mirroring */
+            #video {
+                transform: scaleX(-1);
+            }
+
             @media (max-width: 1024px) {
                 .main-container {
                     grid-template-columns: 1fr;
@@ -231,6 +254,15 @@
                         Secure login with facial recognition
                     </p>
                 </div>
+
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
 
                 <form
                     class="space-y-6"
@@ -452,7 +484,6 @@
         </div>
 
         <script>
-            // Face recognition logic remains the same
             const video = document.getElementById("video");
             const canvas = document.getElementById("canvas");
             const photoInput = document.getElementById("photo");
@@ -502,11 +533,11 @@
 
                 const originalText = captureBtn.innerHTML;
                 captureBtn.innerHTML = `
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-        </svg>
-        Captured!
-      `;
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Captured!
+                `;
 
                 setTimeout(() => {
                     captureBtn.innerHTML = originalText;

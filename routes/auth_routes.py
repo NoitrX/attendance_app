@@ -40,17 +40,7 @@ def register():
         _app
     )
 
-@auth.route('/login', methods=['GET', 'POST'])
-def login():
-      email = request.form.get('email')
-      password = request.form.get('password')
 
-      if not all([email, password]):
-        flash('Email and password are required.', 'error')
-        return redirect(url_for('auth.login'))
-
-      return login_user(email, password, request.files.get('photo'), _app)
-      return render_template('login.html')
 
 
 

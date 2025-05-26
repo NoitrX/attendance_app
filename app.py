@@ -31,6 +31,9 @@ eigenfaces = None
 attempt_count = 0
 success_count = 0
 
+# Load Haar Cascade for face detection
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
 def create_app():
     global mean_face, eigenfaces, attempt_count, success_count
 
@@ -43,9 +46,20 @@ def create_app():
     def preprocess_image(image, size=(100, 100)):
         if image is None:
             raise ValueError("Image cannot be read.")
-        image = cv2.resize(image, size)
-        image = image.astype(np.float32) / 255.0
-        return image.flatten()
+        
+        # Detect face
+        faces = face_cascade.detectMultiScale(image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+        if len(faces) == 0:
+            raise ValueError("No face detected in image.")
+        
+        # Use the first detected face
+        x, y, w, h = faces[0]
+        face_img = image[y:y+h, x:x+w]
+        
+        # Resize and normalize
+        face_img = cv2.resize(face_img, size)
+        face_img = face_img.astype(np.float32) / 255.0
+        return face_img.flatten()
 
     def base64_to_image(base64_string):
         img_data = base64.b64decode(base64_string.split(',')[1])
@@ -57,9 +71,11 @@ def create_app():
         mean_face_local = np.mean(data_matrix, axis=0)
         centered_data = data_matrix - mean_face_local
         U, S, Vt = np.linalg.svd(centered_data, full_matrices=False)
-        k = min(10, Vt.shape[0])
+        k = min(20, Vt.shape[0])  # Increased to 20 eigenfaces
         eigenfaces_local = Vt[:k]
         weights = np.dot(centered_data, eigenfaces_local.T)
+        # Normalize weights
+        weights = (weights - np.mean(weights, axis=0)) / np.std(weights, axis=0)
         return mean_face_local, eigenfaces_local, weights
 
     def build_eigenface_model():
@@ -71,32 +87,38 @@ def create_app():
             if biometric.image:
                 img_path = os.path.join(app.config['CAPTURE_FOLDER'], biometric.image)
                 img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-                if img is not None:
-                    all_images.append(preprocess_image(img))
+                try:
+                    # Ensure the image contains a face
+                    faces = face_cascade.detectMultiScale(img, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                    if len(faces) == 0:
+                        logger.warning(f"No face detected in biometric image {biometric.image}")
+                        continue
+                    all_images.append(img)  # Store raw image for preprocessing
                     image_mapping.append(biometric.id)
-        if not all_images:
+                except ValueError as e:
+                    logger.warning(f"Error processing biometric image {biometric.image}: {str(e)}")
+                    continue
+        if len(all_images) < 10:  # Require at least 10 images for a robust model
+            logger.warning(f"Insufficient images for eigenface model: {len(all_images)} images found")
             mean_face, eigenfaces = None, None
             return
-        data_matrix = np.array(all_images)
-        mean_face = np.mean(data_matrix, axis=0)
-        centered_data = data_matrix - mean_face
-        U, S, Vt = np.linalg.svd(centered_data, full_matrices=False)
-        k = min(10, Vt.shape[0])
-        eigenfaces = Vt[:k]
-        weights = np.dot(centered_data, eigenfaces.T)
+        mean_face, eigenfaces, weights = compute_eigenfaces(all_images)
         for idx, biometric_id in enumerate(image_mapping):
             biometric = UserBiometric.query.get(biometric_id)
             biometric.biometric = json.dumps(weights[idx].tolist())
         db.session.commit()
+        logger.info(f"Eigenface model built with {len(all_images)} images and {weights.shape[1]} eigenfaces")
 
     def recognize_face(img, mean_face, eigenfaces):
         if mean_face is None or eigenfaces is None:
             raise ValueError("Eigenface model not initialized.")
         processed_img = preprocess_image(img)
         weights = np.dot(processed_img - mean_face, eigenfaces.T)
+        # Normalize weights
+        weights = (weights - np.mean(weights)) / np.std(weights) if np.std(weights) != 0 else weights
         return weights
 
-    def verify_biometric(new_weights, user_id, threshold=10.0):
+    def verify_biometric(new_weights, user_id, threshold=3.0):
         min_distance = float('inf')
         biometrics = UserBiometric.query.filter_by(user_id=user_id).filter(UserBiometric.biometric.isnot(None)).all()
         if not biometrics:
@@ -104,13 +126,27 @@ def create_app():
         for biometric in biometrics:
             stored_weights = np.array(json.loads(biometric.biometric))
             distance = np.linalg.norm(new_weights - stored_weights)
+            logger.info(f"Biometric verification for user_id {user_id}: Distance = {distance:.2f}")
             if distance < min_distance:
                 min_distance = distance
         return min_distance < threshold
 
+    def validate_biometric_images():
+        biometrics = UserBiometric.query.all()
+        for biometric in biometrics:
+            img_path = os.path.join(app.config['CAPTURE_FOLDER'], biometric.image)
+            img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+            if img is None:
+                logger.warning(f"Biometric image {biometric.image} for user_id {biometric.user_id} is invalid")
+                continue
+            faces = face_cascade.detectMultiScale(img, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+            if len(faces) == 0:
+                logger.warning(f"Biometric image {biometric.image} for user_id {biometric.user_id} contains no face")
+
     db.init_app(app)
     with app.app_context():
         db.create_all()
+        validate_biometric_images()  # Validate existing biometric images
         build_eigenface_model()
 
     Migrate(app, db)
@@ -133,7 +169,19 @@ def create_app():
                 return redirect(url_for('login'))
 
             try:
-                # Step 1: Verify user via email and password
+                # Step 1: Convert base64 to image
+                img = base64_to_image(photo_base64)
+
+                # Step 2: Detect face
+                faces = face_cascade.detectMultiScale(img, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                if len(faces) == 0:
+                    attempt_count += 1
+                    log_message = f"Recognition attempt #{attempt_count}: Email={email} - Failed: No face detected"
+                    logger.info(log_message)
+                    flash('No face detected in the provided image.', 'error')
+                    return redirect(url_for('login'))
+
+                # Step 3: Verify user via email and password
                 user = User.query.filter_by(email=email).first()
                 attempt_count += 1
                 log_message = f"Recognition attempt #{attempt_count}: Email={email}"
@@ -150,8 +198,7 @@ def create_app():
                     flash('Incorrect password.', 'error')
                     return redirect(url_for('login'))
 
-                # Step 2: Verify biometric
-                img = base64_to_image(photo_base64)
+                # Step 4: Verify biometric
                 weights = recognize_face(img, mean_face, eigenfaces)
                 biometric_match = verify_biometric(weights, user.id)
 
@@ -217,25 +264,35 @@ def create_app():
                 if img is None:
                     flash('Invalid image file.', 'error')
                     return redirect(url_for('index'))
+                # Validate face
+                faces = face_cascade.detectMultiScale(img, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                if len(faces) == 0:
+                    flash(f'No face detected in uploaded image {file.filename}.', 'error')
+                    return redirect(url_for('index'))
                 images.append(img)
                 filename = f"upload_{len(images)}_{file.filename}"
                 filepath = os.path.join(app.config['CAPTURE_FOLDER'], filename)
                 cv2.imwrite(filepath, img)
                 image_paths.append(filename)
 
-        for i in range(5):
+        for i in range(10):  # Increased to 10 photos
             photo_key = f'webcam_photos_{i}'
             if photo_key in request.form:
                 base64_string = request.form[photo_key]
                 img = base64_to_image(base64_string)
+                # Validate face
+                faces = face_cascade.detectMultiScale(img, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                if len(faces) == 0:
+                    flash(f'No face detected in webcam photo {i + 1}.', 'error')
+                    return redirect(url_for('index'))
                 images.append(img)
                 filename = f"capture_{len(images)}_{int(np.random.rand() * 1000000)}.jpg"
                 filepath = os.path.join(app.config['CAPTURE_FOLDER'], filename)
                 cv2.imwrite(filepath, img)
                 image_paths.append(filename)
 
-        if len(images) != 5:
-            flash(f'Exactly 5 photos are required. Provided: {len(images)}.', 'error')
+        if len(images) != 10:  # Require exactly 10 photos
+            flash(f'Exactly 10 photos with detectable faces are required. Provided: {len(images)}.', 'error')
             return redirect(url_for('index'))
 
         new_user = User(

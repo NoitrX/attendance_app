@@ -126,7 +126,7 @@
         const webcamPreview = document.getElementById('webcamPreview');
         const webcamPhotosContainer = document.getElementById('webcamPhotosContainer');
         let capturedPhotos = [];
-        const maxPhotos = 5;
+        const maxPhotos = 10;
 
         async function startWebcam() {
             try {
@@ -234,10 +234,7 @@
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             const files = document.getElementById('example5').files;
             const totalPhotos = files.length + capturedPhotos.length;
-            if (totalPhotos !== 5) {
-                event.preventDefault();
-                alert(`Please provide exactly 5 photos. Currently provided: ${totalPhotos}.`);
-            }
+            
         });
 
         startWebcam();

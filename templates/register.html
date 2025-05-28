@@ -1,262 +1,417 @@
-{% extends 'base.html' %}
-{% block content %}
-<div class="w-full bg-[#070B25] flex flex-col lg:flex-row justify-center items-center w-screen h-screen gap-4 relative">
-    <div class="info-icon absolute top-4 right-4 cursor-pointer">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12" y2="8"></line>
-        </svg>
-    </div>
+{% extends 'base.html' %} {% block content %}
+<div
+  class="w-full bg-[#070B25] flex flex-col lg:flex-row justify-center items-center w-screen h-screen gap-4 relative"
+>
+  <div class="info-icon absolute top-4 right-4 cursor-pointer">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12" y2="8"></line>
+    </svg>
+  </div>
 
-    <div class="w-1/2 ml-4 bg-cover bg-center rounded-2xl" style="background-color: #0f172a; height: 95vh;">
-        <div class="right-section animate_animated animate_fadeIn rounded-2xl relative h-full flex flex-col items-center py-6">
-            <div class="right-content text-center mb-4">
-                <h1 class="text-3xl font-bold text-white">FRANCES</h1>
-                <p class="text-sm text-gray-300">
-                    Face Recog Attendance System
-                </p>
-            </div>
-            <div class="flex flex-col items-center w-full">
-                <video id="video" width="400" height="300" autoplay class="rounded-md"></video>
-                <canvas id="canvas" class="hidden"></canvas>
-                <div class="mt-4 space-y-2 w-full text-center">
-                    <div id="webcamPreview" class="grid grid-cols-3 gap-2 mx-auto" style="max-width: 400px;"></div>
-                    <div class="space-x-2">
-                        <button id="capture" type="button" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-500 text-xs">
-                            Capture Photo
-                        </button>
-                    </div>
-                </div>
-            </div>
+  <div
+    class="w-1/2 ml-4 bg-cover bg-center rounded-2xl"
+    style="background-color: #0f172a; height: 95vh"
+  >
+    <div
+      class="right-section animate_animated animate_fadeIn rounded-2xl relative h-full flex flex-col items-center py-6"
+    >
+      <div class="right-content text-center mb-4">
+        <h1 class="text-3xl font-bold text-white">FRANCES</h1>
+        <p class="text-sm text-gray-300">Face Recog Attendance System</p>
+      </div>
+      <div class="flex flex-col items-center w-full">
+        <video
+          id="video"
+          width="400"
+          height="300"
+          autoplay
+          class="rounded-md"
+        ></video>
+        <canvas id="canvas" class="hidden"></canvas>
+        <div class="mt-4 space-y-2 w-full text-center">
+          <div
+            id="webcamPreview"
+            class="grid grid-cols-3 gap-2 mx-auto"
+            style="max-width: 400px"
+          ></div>
+          <div class="space-x-2">
+            <button
+              id="capture"
+              type="button"
+              class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-500 text-xs"
+            >
+              Capture Photo
+            </button>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-    <div class="w-1/2 p-4 mx-auto">
-        <div class="border border-white p-12 max-w-md mx-auto">
-            <h4 class="font-semibold text-base text-center text-xl text-white mb-2">Create Account</h4>
-            <p class="text-xs text-gray-300 text-center">
-                Enter Your Details to Access the Attendance Web Application
-            </p>
+  <div class="w-1/2 p-4 mx-auto">
+    <div class="border border-white p-12 max-w-md mx-auto">
+      <h4 class="font-semibold text-base text-center text-xl text-white mb-2">
+        Create Account
+      </h4>
+      <p class="text-xs text-gray-300 text-center">
+        Enter Your Details to Access the Attendance Web Application
+      </p>
 
-            {% with messages = get_flashed_messages(with_categories=True) %}
-                {% if messages %}
-                    <div class="mt-2 text-center text-xs">
-                        {% for category, message in messages %}
-                            <p class="{% if category == 'error' %}text-red-500{% else %}text-green-500{% endif %}">{{ message }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
+      {% with messages = get_flashed_messages(with_categories=True) %} {% if
+      messages %}
+      <div class="mt-2 text-center text-xs">
+        {% for category, message in messages %}
+        <p
+          class="{% if category == 'error' %}text-red-500{% else %}text-green-500{% endif %}"
+        >
+          {{ message }}
+        </p>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
 
-            <hr class="w-full border border-gray-200 mt-1" />
-            <form id="registerForm" action="/register" method="POST" enctype="multipart/form-data">
-                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2 mt-2 w-full">
-                    <div class="w-full mt-1">
-                        <label for="first_name" class="block text-xs font-medium text-white">First Name</label>
-                        <div class="mt-1">
-                            <input type="text" name="first_name" id="first_name" autocomplete="given-name" placeholder="Enter Your First Name" class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none" required />
-                        </div>
-                    </div>
+      <hr class="w-full border border-gray-200 mt-1" />
+      <form
+        id="registerForm"
+        action="/register"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <div class="grid grid-cols-1 gap-2 lg:grid-cols-2 mt-2 w-full">
+          <div class="w-full mt-1">
+            <label for="first_name" class="block text-xs font-medium text-white"
+              >First Name</label
+            >
+            <div class="mt-1">
+              <input
+                type="text"
+                name="first_name"
+                id="first_name"
+                autocomplete="given-name"
+                placeholder="Enter Your First Name"
+                class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none"
+                required
+              />
+            </div>
+          </div>
 
-                    <div class="w-full mt-1">
-                        <label for="last_name" class="block text-xs font-medium text-white">Last Name</label>
-                        <div class="mt-1">
-                            <input type="text" name="last_name" id="last_name" autocomplete="family-name" placeholder="Enter Your Last Name" class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none" required />
-                        </div>
-                    </div>
+          <div class="w-full mt-1">
+            <label for="last_name" class="block text-xs font-medium text-white"
+              >Last Name</label
+            >
+            <div class="mt-1">
+              <input
+                type="text"
+                name="last_name"
+                id="last_name"
+                autocomplete="family-name"
+                placeholder="Enter Your Last Name"
+                class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none"
+                required
+              />
+            </div>
+          </div>
 
-                    <div class="w-full mt-1">
-                        <label for="email" class="block text-xs font-medium text-white">Email</label>
-                        <div class="mt-1">
-                            <input type="email" name="email" id="email" autocomplete="email" placeholder="Email" class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none" required />
-                        </div>
-                    </div>
+          <div class="w-full mt-1">
+            <label for="email" class="block text-xs font-medium text-white"
+              >Email</label
+            >
+            <div class="mt-1">
+              <input
+                type="email"
+                name="email"
+                id="email"
+                autocomplete="email"
+                placeholder="Email"
+                class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none"
+                required
+              />
+            </div>
+          </div>
 
-                    <div class="w-full mt-1">
-                        <label for="password" class="block text-xs font-medium text-white">Password</label>
-                        <div class="mt-1">
-                            <input type="password" name="password" id="password" autocomplete="new-password" placeholder="Password" class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none" required />
-                        </div>
-                    </div>
+          <div class="w-full mt-1">
+            <label for="password" class="block text-xs font-medium text-white"
+              >Password</label
+            >
+            <div class="mt-1">
+              <input
+                type="password"
+                name="password"
+                id="password"
+                autocomplete="new-password"
+                placeholder="Password"
+                class="block w-full border border-gray-300 rounded-md py-1.5 px-2 text-xs text-white bg-transparent placeholder:text-gray-400 focus:outline-none"
+                required
+              />
+            </div>
+          </div>
 
-                    <div class="w-full mt-2 col-span-1 lg:col-span-2">
-                        <div class="w-full">
-                            <label for="example5" class="mb-1 block text-xs font-medium text-white">Upload Photos (Optional)</label>
-                            <label class="flex w-full cursor-pointer appearance-none items-center justify-center rounded-md border-2 border-dashed border-gray-200 p-3 transition-all hover:border-indigo-300">
-                                <div id="uploadContent" class="space-y-0.5 text-center {% if uploaded_images %}hidden{% endif %}">
-                                    <div class="mx-auto inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-gray-500">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                                        </svg>
-                                    </div>
-                                    <div class="text-white text-xs">
-                                        <a href="#" class="font-medium text-indigo-500 hover:text-indigo-700">Click to upload</a> or drag and drop
-                                    </div>
-                                    <p class="text-xs text-white">SVG, PNG, JPG, or GIF (max. 800x400px)</p>
-                                </div>
-                                <div id="previewContainer" class="grid grid-cols-3 gap-2 {% if not uploaded_images %}hidden{% endif %}">
-                                    {% if uploaded_images %}
-                                        {% for image in uploaded_images %}
-                                            <img src="{{ url_for('static', filename=image) }}" alt="Uploaded Image" class="max-w-full h-auto rounded-md" />
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
-                                <input id="example5" name="photo" type="file" accept="image/*" multiple class="sr-only" />
-                            </label>
-                        </div>
-                    </div>
-
-                    <div id="webcamPhotosContainer" class="hidden"></div>
-
-                    <div class="flex justify-center w-full col-span-1 lg:col-span-2 mt-2">
-                        <button type="submit" class="px-4 py-3 w-32 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-500 transition-all duration-200 cursor-pointer text-xs">
-                            Register
-                        </button>
-                    </div>
+          <div class="w-full mt-2 col-span-1 lg:col-span-2">
+            <div class="w-full">
+              <label
+                for="example5"
+                class="mb-1 block text-xs font-medium text-white"
+                >Upload Photos (Optional)</label
+              >
+              <label
+                class="flex w-full cursor-pointer appearance-none items-center justify-center rounded-md border-2 border-dashed border-gray-200 p-3 transition-all hover:border-indigo-300"
+              >
+                <div id="uploadContent" class="space-y-0.5 text-center">
+                  <div
+                    class="mx-auto inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-100"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="h-4 w-4 text-gray-500"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="text-white text-xs">
+                    <a
+                      href="#"
+                      class="font-medium text-indigo-500 hover:text-indigo-700"
+                      >Click to upload</a
+                    >
+                    or drag and drop
+                  </div>
+                  <p class="text-xs text-white">
+                    PNG, JPG, or JPEG (max. 800x400px)
+                  </p>
                 </div>
-            </form>
+                <div
+                  id="previewContainer"
+                  class="grid grid-cols-3 gap-2 hidden"
+                ></div>
+                <input
+                  id="example5"
+                  name="photo"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  class="sr-only"
+                />
+              </label>
+            </div>
+          </div>
+
+          <div id="webcamPhotosContainer" class="hidden"></div>
+
+          <div class="flex justify-center w-full col-span-1 lg:col-span-2 mt-2">
+            <button
+              type="submit"
+              class="px-4 py-3 w-32 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-500 transition-all duration-200 cursor-pointer text-xs"
+            >
+              Register
+            </button>
+          </div>
         </div>
+      </form>
     </div>
+  </div>
 
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const captureButton = document.getElementById('capture');
-        const webcamPreview = document.getElementById('webcamPreview');
-        const webcamPhotosContainer = document.getElementById('webcamPhotosContainer');
-        let capturedPhotos = [];
-        const maxPhotos = 10;
+  <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const captureButton = document.getElementById("capture");
+    const webcamPreview = document.getElementById("webcamPreview");
+    const webcamPhotosContainer = document.getElementById(
+      "webcamPhotosContainer"
+    );
+    let capturedPhotos = [];
+    const maxPhotos = 10;
 
-        async function startWebcam() {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        width: { ideal: 600 }, 
-                        height: { ideal: 400 } 
-                    }
-                });
-                video.srcObject = stream;
-            } catch (err) {
-                console.error("Error accessing webcam:", err);
-                alert("Could not access webcam. Please ensure you have a camera and have granted permission.");
-            }
-        }
-
-        captureButton.addEventListener('click', () => {
-            if (capturedPhotos.length >= maxPhotos) {
-                alert(`You have already captured ${maxPhotos} photos.`);
-                return;
-            }
-
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            const photoData = canvas.toDataURL('image/jpeg');
-            capturedPhotos.push(photoData);
-
-            const previewDiv = document.createElement('div');
-            previewDiv.classList.add('relative', 'inline-block');
-            const img = document.createElement('img');
-            img.src = photoData;
-            img.classList.add('w-[120px]', 'h-[80px]', 'rounded-md', 'object-cover');
-            previewDiv.appendChild(img);
-
-            const deleteButton = document.createElement('button');
-            deleteButton.type = 'button';
-            deleteButton.classList.add('absolute', 'top-0', 'right-0', 'bg-red-600', 'text-white', 'text-xs', 'rounded-full', 'w-5', 'h-5', 'flex', 'items-center', 'justify-center');
-            deleteButton.innerHTML = '×';
-            deleteButton.addEventListener('click', () => {
-                capturedPhotos = capturedPhotos.filter(p => p !== photoData);
-                previewDiv.remove();
-                updateWebcamPhotosInput();
-                updateCaptureButton();
-            });
-            previewDiv.appendChild(deleteButton);
-
-            webcamPreview.appendChild(previewDiv);
-            updateWebcamPhotosInput();
-            updateCaptureButton();
+    async function startWebcam() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 600 },
+            height: { ideal: 400 },
+          },
         });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error("Error accessing webcam:", err);
+        alert(
+          "Could not access webcam. Please ensure you have a camera and have granted permission."
+        );
+      }
+    }
 
-        function updateWebcamPhotosInput() {
-            webcamPhotosContainer.innerHTML = '';
-            capturedPhotos.forEach((photo, index) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = `webcam_photos_${index}`;
-                input.value = photo;
-                webcamPhotosContainer.appendChild(input);
-            });
-        }
+    captureButton.addEventListener("click", () => {
+      const totalPhotos =
+        capturedPhotos.length +
+        document.getElementById("example5").files.length;
+      if (totalPhotos >= maxPhotos) {
+        alert(`You have reached the maximum of ${maxPhotos} photos.`);
+        return;
+      }
 
-        function updateCaptureButton() {
-            captureButton.disabled = capturedPhotos.length >= maxPhotos;
-            captureButton.classList.toggle('opacity-50', capturedPhotos.length >= maxPhotos);
-            captureButton.classList.toggle('cursor-not-allowed', capturedPhotos.length >= maxPhotos);
-            const counter = document.getElementById('photoCounter') || document.createElement('p');
-            counter.id = 'photoCounter';
-            counter.classList.add('text-white', 'text-xs', 'mb-2');
-            counter.textContent = `Captured: ${capturedPhotos.length}/${maxPhotos}`;
-            webcamPreview.insertAdjacentElement('beforebegin', counter);
-        }
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0);
+      const photoData = canvas.toDataURL("image/jpeg");
+      capturedPhotos.push(photoData);
 
-        document.getElementById('example5').addEventListener('change', function(event) {
-            const files = event.target.files;
-            const uploadContent = document.getElementById('uploadContent');
-            const previewContainer = document.getElementById('previewContainer');
+      const previewDiv = document.createElement("div");
+      previewDiv.classList.add("relative", "inline-block");
+      const img = document.createElement("img");
+      img.src = photoData;
+      img.classList.add("w-[120px]", "h-[80px]", "rounded-md", "object-cover");
+      previewDiv.appendChild(img);
 
-            previewContainer.innerHTML = '';
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.classList.add(
+        "absolute",
+        "top-0",
+        "right-0",
+        "bg-red-600",
+        "text-white",
+        "text-xs",
+        "rounded-full",
+        "w-5",
+        "h-5",
+        "flex",
+        "items-center",
+        "justify-center"
+      );
+      deleteButton.innerHTML = "×";
+      deleteButton.addEventListener("click", () => {
+        capturedPhotos = capturedPhotos.filter((p) => p !== photoData);
+        previewDiv.remove();
+        updateWebcamPhotosInput();
+        updateCaptureButton();
+      });
+      previewDiv.appendChild(deleteButton);
 
-            if (files.length > 0) {
-                uploadContent.classList.add('hidden');
-                previewContainer.classList.remove('hidden');
+      webcamPreview.appendChild(previewDiv);
+      updateWebcamPhotosInput();
+      updateCaptureButton();
+    });
 
-                Array.from(files).forEach(file => {
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.classList.add('max-w-full', 'h-auto', 'rounded-md');
-                            previewContainer.appendChild(img);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            } else {
-                previewContainer.classList.add('hidden');
-                uploadContent.classList.remove('hidden');
+    function updateWebcamPhotosInput() {
+      webcamPhotosContainer.innerHTML = "";
+      capturedPhotos.forEach((photo, index) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = `webcam_photos_${index}`;
+        input.value = photo;
+        webcamPhotosContainer.appendChild(input);
+      });
+    }
+
+    function updateCaptureButton() {
+      const totalPhotos =
+        capturedPhotos.length +
+        document.getElementById("example5").files.length;
+      captureButton.disabled = totalPhotos >= maxPhotos;
+      captureButton.classList.toggle("opacity-50", totalPhotos >= maxPhotos);
+      captureButton.classList.toggle(
+        "cursor-not-allowed",
+        totalPhotos >= maxPhotos
+      );
+      const counter =
+        document.getElementById("photoCounter") || document.createElement("p");
+      counter.id = "photoCounter";
+      counter.classList.add("text-white", "text-xs", "mb-2");
+      counter.textContent = `Captured: ${totalPhotos}/${maxPhotos}`;
+      webcamPreview.insertAdjacentElement("beforebegin", counter);
+    }
+
+    document
+      .getElementById("example5")
+      .addEventListener("change", function (event) {
+        const files = event.target.files;
+        const uploadContent = document.getElementById("uploadContent");
+        const previewContainer = document.getElementById("previewContainer");
+
+        previewContainer.innerHTML = "";
+
+        if (files.length > 0) {
+          const totalPhotos = files.length + capturedPhotos.length;
+          if (totalPhotos > maxPhotos) {
+            alert(
+              `Total photos (uploaded + captured) cannot exceed ${maxPhotos}.`
+            );
+            this.value = ""; // Clear file input
+            return;
+          }
+          uploadContent.classList.add("hidden");
+          previewContainer.classList.remove("hidden");
+
+          Array.from(files).forEach((file) => {
+            if (file && file.type.startsWith("image/")) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("max-w-full", "h-auto", "rounded-md");
+                previewContainer.appendChild(img);
+              };
+              reader.readAsDataURL(file);
             }
-        });
+          });
+        } else {
+          previewContainer.classList.add("hidden");
+          uploadContent.classList.remove("hidden");
+        }
+        updateCaptureButton();
+      });
 
-        document.getElementById('registerForm').addEventListener('submit', function(event) {
-            const files = document.getElementById('example5').files;
-            const totalPhotos = files.length + capturedPhotos.length;
-            
-        });
+    document
+      .getElementById("registerForm")
+      .addEventListener("submit", function (event) {
+        const files = document.getElementById("example5").files;
+        const totalPhotos = files.length + capturedPhotos.length;
+        if (totalPhotos < 1 || totalPhotos > maxPhotos) {
+          event.preventDefault();
+          alert(
+            `Please provide 1 to ${maxPhotos} photos. Current: ${totalPhotos}`
+          );
+        }
+      });
 
-        startWebcam();
-    </script>
+    startWebcam();
+  </script>
 
-    <style>
-        #video {
-            transform: scaleX(-1); 
-        }
-        #webcamPreview img {
-            transform: scaleX(-1); 
-        }
-        .info-icon {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: #ffffff;
-            transition: color 0.3s ease;
-        }
-        .info-icon:hover {
-            color: #a3bffa;
-        }
-    </style>
+  <style>
+    #video {
+      transform: scaleX(-1);
+    }
+    #webcamPreview img {
+      transform: scaleX(-1);
+    }
+    .info-icon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #ffffff;
+      transition: color 0.3s ease;
+    }
+    .info-icon:hover {
+      color: #a3bffa;
+    }
+  </style>
 </div>
 {% endblock %}

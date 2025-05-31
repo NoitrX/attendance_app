@@ -99,7 +99,7 @@
           const data = await response.json();
 
           if (data.success) {
-            window.location.href = "/admin/dashboard"; 
+            window.location.href = data.redirect;; 
           } else {
             Swal.fire({
               icon: "error",

@@ -127,8 +127,18 @@ def schedule_delete(id):
 @auth.route('/schedule/toggle/<int:id>', methods=['POST'])
 def schedule_toggle(id):
     schedule = Schedule.query.get_or_404(id)
+    
+    if schedule.status != 'Aktif':
+        Schedule.query.filter(Schedule.status == 'Aktif').update({'status': 'Tidak Aktif'})
+    
     schedule.status = 'Tidak Aktif' if schedule.status == 'Aktif' else 'Aktif'
-    db.session.commit()
+    try:
+        db.session.commit()
+        flash(f"Schedule '{schedule.schedule_title}' status updated to {schedule.status}.", 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error updating schedule status: {str(e)}", 'error')
+    
     return redirect(url_for('auth.schedule_index'))
 
 

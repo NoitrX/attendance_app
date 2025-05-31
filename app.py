@@ -38,7 +38,10 @@ def create_app():
         try:
             img_data = base64.b64decode(base64_string.split(',')[1])
             img = Image.open(io.BytesIO(img_data))
-            return cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+            img_array = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+            # Resize to consistent dimensions for better encoding
+            img_resized = cv2.resize(img_array, (300, 300))
+            return img_resized
         except Exception as e:
             flash(f'Error processing image: {str(e)}', 'error')
             logger.error(f'Image processing error: {str(e)}')
@@ -99,22 +102,66 @@ def create_app():
             stored_encodings = [np.frombuffer(b.biometric, dtype=np.float64) for b in biometrics]
             new_encoding = new_encodings[0]
 
-            # Compare faces
-            results = face_recognition.compare_faces(stored_encodings, new_encoding, tolerance=0.6)
-            if not any(results):
+            # Compare faces with stricter tolerance and require multiple matches
+            distances = face_recognition.face_distance(stored_encodings, new_encoding)
+            results = [d <= 0.45 for d in distances]  # Stricter tolerance
+            match_count = sum(1 for r in results if r)
+            required_matches = max(1, len(stored_encodings) // 2)  # At least half must match
+
+            logger.info(f'Face distances: {distances.tolist()}')
+            logger.info(f'Face verification for user ID {user.id}: {match_count}/{len(stored_encodings)} encodings matched')
+
+            # Check if the face matches another user more closely
+            all_biometrics = UserBiometric.query.filter(UserBiometric.user_id != user.id).all()
+            if all_biometrics:
+                other_encodings = [(b.user_id, np.frombuffer(b.biometric, dtype=np.float64)) for b in all_biometrics]
+                other_distances = [(uid, face_recognition.face_distance([enc], new_encoding)[0]) for uid, enc in other_encodings]
+                other_matches = [(uid, d) for uid, d in other_distances if d <= 0.45]
+                if other_matches:
+                    best_match = min(other_matches, key=lambda x: x[1])
+                    if best_match[1] < min(distances):  # If another user matches better
+                        flash('Face matches another user.', 'error')
+                        logger.warning(f'Face matches another user ID: {best_match[0]}')
+                        return redirect(url_for('login'))
+
+            if match_count < required_matches:
                 flash('Face verification failed.', 'error')
-                logger.warning(f'Face verification failed for user ID: {user.id}')
+                logger.warning(f'Face verification failed for user ID: {user.id}, matches: {match_count}/{required_matches}')
                 return redirect(url_for('login'))
 
+            # Save login photo for debugging
+            login_photo_path = os.path.join(app.config['CAPTURE_FOLDER'], f'login_{user.id}_{int(np.random.rand() * 1000000)}.jpg')
+            cv2.imwrite(login_photo_path, img)
+            logger.info(f'Login photo saved: {login_photo_path}')
+
+            schedule_time = Schedule.query.filter(Schedule.status == 'Aktif').first()
+            if not schedule_time:
+                flash('No active schedule found.', 'error')
+                logger.warning('No active schedule found for attendance recording')
+                return redirect(url_for('login'))
             # Record attendance
             try:
                 jakarta_tz = pytz.timezone('Asia/Jakarta')
                 attendance_time = datetime.now(jakarta_tz).strftime('%Y-%m-%d %H:%M:%S')
+                current_dt = datetime.now(jakarta_tz)
+                current_time = current_dt.time()
+                attendance_status = None
+                start_time = datetime.strptime(schedule_time.start_time, '%H:%M').time()
+                end_time = datetime.strptime(schedule_time.end_time, '%H:%M').time()
+                if current_time < start_time:
+                    flash('Attendance not allowed before schedule start time.', 'error')
+                    logger.warning(f'Attendance attempt before start time {schedule_time.start_time} for user ID: {user.id}')
+                    return redirect(url_for('login'))
+                elif start_time <= current_time <= end_time:
+                    attendance_status = 'Present'
+                else:  # current_time > end_time
+                    attendance_status = 'Late'
+                    
                 attendance = UserAttendance(
                     user_id=user.id,
-                    attendance_time=attendance_time,
+                    attendance_time=attendance_status,
                     status='Present',
-                    schedule_id=1
+                    schedule_id=schedule_time.id
                 )
                 db.session.add(attendance)
                 db.session.commit()
@@ -124,6 +171,10 @@ def create_app():
                 db.session.rollback()
                 flash(f'Error recording attendance: {str(e)}', 'error')
                 logger.error(f'Error recording attendance for user ID: {user.id}: {str(e)}')
+            finally:
+                # Clean up login photo
+                if os.path.exists(login_photo_path):
+                    os.remove(login_photo_path)
             return redirect(url_for('index'))
 
         return render_template('login.html')
@@ -163,6 +214,7 @@ def create_app():
                     flash(f'Invalid image file: {file.filename}', 'error')
                     logger.warning(f'Invalid image file: {file.filename}')
                     return redirect(url_for('index'))
+                img = cv2.resize(img, (300, 300))  # Resize for consistency
                 encodings = face_recognition.face_encodings(img)
                 if len(encodings) != 1:
                     flash(f'Exactly one face must be detected in {file.filename}.', 'error')

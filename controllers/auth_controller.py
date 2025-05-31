@@ -41,7 +41,7 @@ def login_admin(email, password):
         }), 403
     
    
-    if not check_password_hash(admin_user.password_hash, password):
+    if not bcrypt.checkpw(password.encode('utf-8'), admin_user.password.encode('utf-8')):
         return jsonify({
             "success": False,
             "message": "Invalid password"
@@ -54,7 +54,7 @@ def login_admin(email, password):
     
     return jsonify({
         "success": True,
-        "email": admin_user.email,
-        "message": "Admin login successful"
+        "message": "Login successful",
+        "redirect": url_for('admin.index')
     }), 200
 

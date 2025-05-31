@@ -9,7 +9,7 @@ class Schedule(db.Model):
     schedule_title = db.Column(db.String(255), nullable=False)
     start_time = db.Column(db.String(5), nullable=False)  
     end_time = db.Column(db.String(5), nullable=False)  
-    status = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(50), nullable=False, default="Tidak Aktif")
     timestamps = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __repr__(self):

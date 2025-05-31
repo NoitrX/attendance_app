@@ -34,22 +34,9 @@
           </div>
         </div>
       </div>
+     
       <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center">
-          <div class="p-3 rounded-lg bg-green-50 text-green-600">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-sm font-medium text-gray-500">Active</h3>
-            <p class="text-2xl font-semibold text-gray-900">{{ schedules|selectattr('status', 'equalto', 'Aktif')|list|length }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center">
+        <div class="flex items-center"> 
           <div class="p-3 rounded-lg bg-red-50 text-red-600">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

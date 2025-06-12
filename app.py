@@ -104,9 +104,9 @@ def create_app():
 
             # Compare faces with stricter tolerance and require multiple matches
             distances = face_recognition.face_distance(stored_encodings, new_encoding)
-            results = [d <= 0.45 for d in distances]  # Stricter tolerance
+            results = [d <= 0.48 for d in distances]  
             match_count = sum(1 for r in results if r)
-            required_matches = max(1, len(stored_encodings) // 2)  # At least half must match
+            required_matches = max(1, len(stored_encodings) // 2)  
 
             logger.info(f'Face distances: {distances.tolist()}')
             logger.info(f'Face verification for user ID {user.id}: {match_count}/{len(stored_encodings)} encodings matched')
